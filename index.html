@@ -79,11 +79,19 @@
     #esri_dijit_RendererSlider_0{
       background-color: #ffffff;
     }
+    #search {
+         display: block;
+         position: absolute;
+         z-index: 2;
+         top: 20px;
+         right: 150px;
+      }
   </style>
 
   <script>
     require([
       "esri/Color",
+      "esri/dijit/Search",
       "esri/dijit/BasemapToggle",
       "esri/dijit/ColorInfoSlider",
       "esri/dijit/PopupTemplate",
@@ -98,14 +106,15 @@
       "dojo/on",
       "dojo/domReady!"
     ], function (
-      Color, BasemapToggle, ColorInfoSlider,
+      Color, Search, BasemapToggle, ColorInfoSlider,
       PopupTemplate, FeatureLayer, Map, FeatureLayerStatistics, smartMapping,
       Query, QueryTask, array, dom, on
     ){
       
 	  esriConfig.apiKey = "AAPKd7e3403025ac46a19b2d923767ca73cbaqboW-6F6wd9nn2s3lhajLyMDby6oXYbqGnyDJh_qLW0x7E_6h3wfNhyv1Ou2UTo";
 
-
+      var locatorUrl = "https://sampleserver6.arcgisonline.com/arcgis/rest/services/Locators/Composite_HBR_Asset/GeocodeServer/";
+      
       var url = "https://data-gis.unep-wcmc.org/server/rest/services/Hosted/Table_resultsGIMM_project_s1000m/FeatureServer/0";
 	  
 	  var countries = 'https://data-gis.unep-wcmc.org/server/rest/services/Hosted/Result_countries_s1000m_wgs_corrected/FeatureServer/0';
@@ -143,6 +152,10 @@
 
       //FeatureLayerStatistics will be used to generate stats and histogram for the color slider
       var featureLayerStatistics = new FeatureLayerStatistics({ layer: lyr, visible: false });
+      var search = new Search({
+            map: map
+         }, "search");
+         search.startup();
 
       /******************************************************************************
       * Create the ColorInfoSlider widget and initialize. Pass in an initial
@@ -225,7 +238,30 @@
           layer: lyr
         });
       });
+  var searchWidget = new Search({
+    sources: [{
+      locator: new Locator({ url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"}),
+      countryCode:"CA",
+      singleLineFieldName: "SingleLine",
+      name: "Custom Geocoding Service",
+      localSearchOptions: {
+        minScale: 300000,
+        distance: 50000
+      },
+      placeholder: "Search Canada",
+      maxResults: 3,
+      maxSuggestions: 6,
+      suggestionsEnabled: true,
+      minSuggestCharacters: 0
+  }],
+    view: view,
+    includeDefaultSources: false
+  });
 
+  // Add the search widget to the top right corner of the view
+  view.ui.add(searchWidget, {
+    position: "top-right"
+  });
       /******************************************************************************
       * Function for calling smartMapping and FeatureLayerStatistics plugin
       * This updates the layer's renderer and the color slider
@@ -470,6 +506,7 @@
   </script>
   </head>
   <body class="claro">
+    <div id="search"></div>
     <div id="esri-map-container"></div>
     <div id="basemapToggle-container"></div>
     <div id="esri-colorinfoslider-container"><div style="padding: 8px;">
