@@ -236,30 +236,7 @@
           layer: lyr
         });
       });
-  var searchWidget = new Search({
-    sources: [{
-      locator: new Locator({ url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"}),
-      countryCode:"CA",
-      singleLineFieldName: "SingleLine",
-      name: "Custom Geocoding Service",
-      localSearchOptions: {
-        minScale: 300000,
-        distance: 50000
-      },
-      placeholder: "Search Canada",
-      maxResults: 3,
-      maxSuggestions: 6,
-      suggestionsEnabled: true,
-      minSuggestCharacters: 0
-  }],
-    view: view,
-    includeDefaultSources: false
-  });
 
-  // Add the search widget to the top right corner of the view
-  view.ui.add(searchWidget, {
-    position: "top-right"
-  });
       /******************************************************************************
       * Function for calling smartMapping and FeatureLayerStatistics plugin
       * This updates the layer's renderer and the color slider
